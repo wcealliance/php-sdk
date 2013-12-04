@@ -1,4 +1,4 @@
-verified-sdk-php
+Verified API SDK for PHP
 ================
 
-PHP sdk for Verified API
+Communicate with the Verified REST API using PHP
