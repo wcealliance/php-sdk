@@ -1,0 +1,10 @@
+.DS_STORE
+.DS_Store
+._*
+*.log
+.tm_properties
+*.orig
+*.original~
+/nbproject/private/
+.idea/
+/.project
