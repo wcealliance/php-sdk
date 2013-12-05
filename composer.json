@@ -1,19 +1,18 @@
 {
-  "name" : "verified/verified-sdk-php",
-  "description" : "Verified API PHP SDK",
-  "keywords" : ["rest", "curl", "http", "client", "sdk", "Verified"],
-  "type" : "library",
-  "homepage" : "https://github.com/verified/verified-sdk-php",
-  "license" : "MIT",
-  "require" : {
-      "php" : ">=5.3.0",
-      "ext-curl" : "*",
-      "ext-json" : "*",
-      "mashape/unirest-php": "dev-master"
-  },
-  "autoload" : {
-      "psr-0" : {
-          "Verified" : "lib"
-      }
-  }
+    "name": "verified/verified-sdk-php",
+    "description": "Verified API PHP SDK",
+    "require": {
+        "php" : ">=5.3.0",
+        "ext-curl" : "*",
+        "ext-json" : "*",
+        "mashape/unirest-php": "dev-master"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ekhaled",
+            "email": "me.khaled@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
 }
