@@ -125,8 +125,16 @@
          */
         protected function call($method, $args)
         {
+            // if the method exists, short out here
             if (method_exists($this, $method)) {
                 return call_user_func_array($this->$method, $args);
+            }
+
+            $endpoint = $this->parseMethodCall($method);
+            if ($endpoint !== false) {
+
+            } else {
+                throw new Exception("Invalid method signature, method does not exist");
             }
         }
 
@@ -147,6 +155,46 @@
             $token = preg_replace("/\s+/", "", $request_time) . strtoupper($verb) . $endpoint;
 
             return hash_hmac("sha256", $token, $this->api_secret);
+        }
+
+        /**
+         * Method call parser that converts a method call into a REST resource endpoint
+         *
+         * @param string $method
+         * @return array
+         */
+        private function parseMethodCall($method)
+        {
+            $ret = false;
+            $verbs = array(
+                "get"    => "GET",
+                "add"    => "POST",
+                "edit"   => "PUT",
+                "delete" => "DELETE"
+            );
+            //split the camelcase
+            $words = preg_split("/(?<=[a-z])(?=[A-Z])/x", $method);
+
+            //first word is verb
+            if (isset($verbs[strtolower($words[0])])) {
+                $ret["method"] = $verbs[strtolower($words[0])];
+                //move to next word
+                array_shift($words);
+                //this word should be the main resource
+                if (isset($words[0])) {
+                    $ret["endpoint"] = $this->config['api_endpoint'].
+                        'v' . $this->config['api_version'] . "/" .
+                        strtolower($words[0]) . "/";
+                }
+                //move to next word
+                array_shift($words);
+                $subResource = implode("", $words);
+                if ($subResource != "") {
+                    $ret["sub_resource"] = lcfirst($subResource);
+                }
+            }
+
+            return $ret;
         }
 
     }
