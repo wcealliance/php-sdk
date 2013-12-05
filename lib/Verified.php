@@ -16,7 +16,9 @@
         {
             //declare default options
             $defaults = array(
-                "envelope"       => true,
+                "api_endpoint"    => 'http://verifiedapi.org/',
+                "api_version"     => '1',
+                "envelope"        => true,
                 "suppress_errors" => false,
                 "response_type"   => 'json'
             );
