@@ -125,9 +125,28 @@
          */
         protected function call($method, $args)
         {
-            if(method_exists($this, $method)){
+            if (method_exists($this, $method)) {
                 return call_user_func_array($this->$method, $args);
             }
+        }
+
+        //=============================
+        // Private Methods
+        //=============================
+
+        /**
+         * Signs requests as required by the API
+         *
+         * @param string $verb
+         * @param string $endpoint
+         * @param string $request_time
+         * @return string
+         */
+        private function getSignature($verb, $endpoint, $request_time)
+        {
+            $token = preg_replace("/\s+/", "", $request_time) . strtoupper($verb) . $endpoint;
+
+            return hash_hmac("sha256", $token, $this->api_secret);
         }
 
     }
