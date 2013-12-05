@@ -101,4 +101,31 @@
             return null;
         }
 
+        /**
+         * Magic method to catch non-existent methods and channel them into useful method calls
+         * via the API
+         *
+         * @param string $method
+         * @param array $args
+         * @return mixed
+         */
+        public function __call($method, $args)
+        {
+            return $this->call($method, $args);
+        }
+
+        /**
+         * Workhorse method that processes the methods intercepted by the __call magic method
+         *
+         * @param string $method
+         * @param array $args
+         * @return mixed
+         */
+        protected function call($method, $args)
+        {
+            if(method_exists($this, $method)){
+                return call_user_func_array($this->$method, $args);
+            }
+        }
+
     }
