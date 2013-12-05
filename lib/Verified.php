@@ -1,7 +1,5 @@
 <?php
 
-    namespace Verified;
-
     class Verified
     {
         private $api_key;
@@ -34,11 +32,15 @@
         public function setKey($api_key)
         {
             $this->api_key = $api_key;
+
+            return $this;
         }
 
         public function setSecret($api_secret)
         {
             $this->api_secret = $api_secret;
+
+            return $this;
         }
 
         public function setConfig($key, $val)
@@ -46,6 +48,8 @@
             if (isset($this->config[$key])) {
                 $this->config[$key] = $val;
             }
+
+            return $this;
         }
 
         public function getConfig($key)
