@@ -6,7 +6,7 @@
         private $api_secret;
         private $config = array();
 
-        public function __construct($config)
+        public function __construct($config = array())
         {
             $defaults = array(
                 "envelope"       => true,
