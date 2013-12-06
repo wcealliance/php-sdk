@@ -179,6 +179,12 @@
         // Private Methods
         //=============================
 
+        /**
+         * Handles the actual request to the API
+         *
+         * @param string $resource
+         * @return mixed
+         */
         private function callResource($resource){
             $time = date("c");
             $headers = array(
