@@ -79,4 +79,13 @@ $verified->editUser('user@email.com', array('post_params'));
 $verified->deleteUser('user@email.com');
 ```
 
-
+Calling sub-resources follow a similar `camelCased` pattern, for example:
+```php
+// make a GET request to /user/user@email.com/trainingProfile/
+$training_profile = $verified->getUserTrainingProfile('user@email.com');
+```
+In simple terms:
+- `getXXX()` maps to `GET` requests
+- `addXXX()` maps to `POST` requests
+- `editXXX()` maps to `PUT` requests
+- `deleteXXX()` maps to `DELETE` requests
