@@ -43,8 +43,9 @@ by sending in a configuration array during class instantiation:
 ```php
 // create a new instance
 $config_array = array(
-  "api_key"    => 'YOUR_API_KEY',
-  "api_secret" => 'YOUR_API_SECRET'
+  "api_key"     => 'YOUR_API_KEY',
+  "api_secret"  => 'YOUR_API_SECRET',
+  "api_version" => '1'
 );
 $verified = new Verified($config_array);
 ```
@@ -55,3 +56,27 @@ $verified->setKey('YOUR_API_KEY')
   ->setSecret('YOUR_API_SECRET')
   ->setConfig('api_version', '1');
 ```
+
+Configuration parameters other than `api_key` and `api_secret` have setter and getter methods:
+```php
+// set a config param
+$verified->setConfig('api_version', '1');
+// get a config param
+$version = $verified->getConfig('api_version');
+```
+### Making REST calls to API resources
+Please see the [Verified API docs](http://docs.verifiedapi.org/) for a list of available API resource endpoints. The class uses `__call()` magic method to work out which resource you are calling.
+
+For example:
+```php
+// make a GET request to /user
+$user = $verified->getUser('user@email.com');
+// make a POST request to /user
+$user = $verified->addUser(array('post_params'));
+// make a PUT request to /user
+$verified->editUser('user@email.com', array('post_params'));
+// make a DELETE request to /user
+$verified->deleteUser('user@email.com');
+```
+
+
