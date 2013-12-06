@@ -130,8 +130,45 @@
                 return call_user_func_array($this->$method, $args);
             }
 
-            $endpoint = $this->parseMethodCall($method);
-            if ($endpoint !== false) {
+            $resource = $this->parseMethodCall($method);
+            if ($resource !== false) {
+
+                $data = array();
+                $key = '';
+                if (in_array($resource["method"], array('GET', 'DELETE', 'PUT'))) {
+                    //for these methods the first argument should be the key
+                    if(isset($args[0])){
+                        if(is_array($args[0])){
+                            //unless it is a getAll kind of method that has no key
+                            $data = (array) $args[0];
+                        }else{
+                            $key = trim((string) $args[0]);
+                        }
+                    }
+                }else{
+                    //for POST, the first argument should be an array
+                    if(isset($args[0])){
+                        $data = (array) $args[0];
+                    }
+                }
+
+                if($resource["method"] == 'PUT' || $resource["method"] == 'GET'){
+                    //for PUT and GET the second argument should be an array
+                    if(isset($args[1])){
+                        $data = (array) $args[1];
+                    }
+                }
+
+                if($key != ""){
+                    $resource["endpoint"] = $resource["endpoint"] . $key ."/";
+                }
+                if(isset($resource["sub_resource"])){
+                    $resource["endpoint"] = $resource["endpoint"] . $resource["sub_resource"];
+                }
+
+                $resource["data"] = $data;
+
+                return $this->callResource($resource);
 
             } else {
                 throw new Exception("Invalid method signature, method does not exist");
@@ -142,6 +179,18 @@
         // Private Methods
         //=============================
 
+        private function callResource($resource){
+            $time = date("c");
+            $headers = array(
+                'Request-Time' => $time,
+                'Api-Key'      => $this->api_key,
+                'Signature'    => $this->getSignature($resource, $time)
+            );
+            $response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
+
+            return $response->body;
+        }
+
         /**
          * Signs requests as required by the API
          *
@@ -150,9 +199,27 @@
          * @param string $request_time
          * @return string
          */
-        private function getSignature($verb, $endpoint, $request_time)
+        private function getSignature($resource, $request_time)
         {
-            $token = preg_replace("/\s+/", "", $request_time) . strtoupper($verb) . $endpoint;
+            $url = $resource["endpoint"];
+            // for GET requests we have to append the args to the url before generating a signature
+            if($resource['method'] == 'GET'){
+                if(is_array($resource["data"])){
+                    if (strpos($url,'?') !== false) {
+                        $url .= "&";
+                    } else {
+                        $url .= "?";
+                    }
+                    foreach ($resource["data"] as $parameter => $val) {
+                        $url .= $parameter . "=" . $val . "&";
+                    }
+                    $url = substr($url, 0, strlen($url) - 1);
+                }
+            }
+
+            $token = preg_replace("/\s+/", "", $request_time) .
+                     strtoupper($resource["method"]) .
+                     str_replace($this->config['api_endpoint'] , "", $url);
 
             return hash_hmac("sha256", $token, $this->api_secret);
         }
