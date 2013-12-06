@@ -69,13 +69,13 @@ Please see the [Verified API docs](http://docs.verifiedapi.org/) for a list of a
 
 For example:
 ```php
-// make a GET request to /user
+// make a GET request to /user/user@email.com
 $user = $verified->getUser('user@email.com');
 // make a POST request to /user
 $user = $verified->addUser(array('post_params'));
-// make a PUT request to /user
+// make a PUT request to /user/user@email.com
 $verified->editUser('user@email.com', array('post_params'));
-// make a DELETE request to /user
+// make a DELETE request to /user/user@email.com
 $verified->deleteUser('user@email.com');
 ```
 
