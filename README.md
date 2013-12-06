@@ -28,7 +28,7 @@ $ git clone git@github.com:verified/verified-sdk-php.git
 
 And include it in your scripts:
 
-```bash
+```php
 //first include Unirest
 require_once '/path/to/unirest-php/lib/Unirest.php';
 //then include this
