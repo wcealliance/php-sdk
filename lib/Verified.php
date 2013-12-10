@@ -104,16 +104,31 @@
             return null;
         }
 
+        /**
+         * Getter for current error
+         *
+         * @return mixed
+         */
         public function getError()
         {
             return $this->_currentError;
         }
 
+        /**
+         * Getter for reponse metadata
+         *
+         * @return mixed
+         */
         public function getMetadata()
         {
             return $this->_metadata;
         }
 
+        /**
+         * Getter for response links
+         *
+         * @return mixed
+         */
         public function getLinks()
         {
             return $this->_links;
@@ -302,6 +317,12 @@
             return $ret;
         }
 
+        /**
+         * converts mixed stdClass and array objects to plain arrays
+         *
+         * @param string $data
+         * @return void
+         */
         private function toArray($data)
         {
             return json_decode(json_encode($data),true);
