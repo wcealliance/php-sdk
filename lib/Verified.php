@@ -6,6 +6,10 @@
         private $api_secret;
         private $config = array();
 
+        private $_metadata;
+        private $_links;
+        private $_currentError;
+
         /**
          * Constructor
          * Extends the default config array and sets the values of api_key and api_secret
@@ -17,8 +21,7 @@
             //declare default options
             $defaults = array(
                 "api_endpoint"    => 'http://verifiedapi.org/',
-                "api_version"     => '1',
-                "suppress_errors" => false
+                "api_version"     => '1'
             );
             foreach ($config as $key => $value) {
                 //pluck the api key out of the config array
@@ -101,6 +104,21 @@
             return null;
         }
 
+        public function getError()
+        {
+            return $this->_currentError;
+        }
+
+        public function getMetadata()
+        {
+            return $this->_metadata;
+        }
+
+        public function getLinks()
+        {
+            return $this->_links;
+        }
+
         /**
          * Magic method to catch non-existent methods and channel them into useful method calls
          * via the API
@@ -157,9 +175,11 @@
                     }
                 }
 
+                //process key
                 if($key != ""){
                     $resource["endpoint"] = $resource["endpoint"] . $key ."/";
                 }
+                //process subresource
                 if(isset($resource["sub_resource"])){
                     $resource["endpoint"] = $resource["endpoint"] . $resource["sub_resource"];
                 }
@@ -192,7 +212,15 @@
             );
             $response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
 
-            return $response->body;
+            $headers = $response->headers;
+            $this->_metadata = isset($response->body->_meta) ? $response->body->_meta : false;
+            $this->_links = isset($response->body->_links) ? $response->body->_links : false;
+            if(!isset($headers['Status']) || $headers['Status'] == '200 OK' || $headers['Status'] == '201 Created'){
+                return $response->body->records;
+            }else{
+                $this->_currentError = $response->body->records;
+                return false;
+            }
         }
 
         /**
