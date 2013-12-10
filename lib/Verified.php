@@ -18,9 +18,7 @@
             $defaults = array(
                 "api_endpoint"    => 'http://verifiedapi.org/',
                 "api_version"     => '1',
-                "envelope"        => true,
-                "suppress_errors" => false,
-                "response_type"   => 'json'
+                "suppress_errors" => false
             );
             foreach ($config as $key => $value) {
                 //pluck the api key out of the config array
