@@ -89,3 +89,22 @@ In simple terms:
 - `addXXX()` maps to `POST` requests
 - `editXXX()` maps to `PUT` requests
 - `deleteXXX()` maps to `DELETE` requests
+
+### Output data &amp; Error handling
+All data from the SDK are in plain PHP arrays. If a method call fails, the output is `false`.
+
+If you encounter the result of a query returning `false`, the error that occured can be obtained from the `getError()` method.
+
+A very simple error resilient code snippet follows:
+```php
+$user = $verified->getUser('user@email.com');
+if ($user == false) {
+  $error = $verified->getError();
+  if($error){
+    throw new Exception($error['errorCode'] . $error['userMessage']);
+  }
+} else {
+  //loop through the returned data
+  //and do something with it
+}
+```
