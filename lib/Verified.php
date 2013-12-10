@@ -153,34 +153,34 @@
                 $key = '';
                 if (in_array($resource["method"], array('GET', 'DELETE', 'PUT'))) {
                     //for these methods the first argument should be the key
-                    if(isset($args[0])){
-                        if(is_array($args[0])){
+                    if (isset($args[0])) {
+                        if (is_array($args[0])) {
                             //unless it is a getAll kind of method that has no key
                             $data = (array) $args[0];
-                        }else{
+                        } else {
                             $key = trim((string) $args[0]);
                         }
                     }
-                }else{
+                } else {
                     //for POST, the first argument should be an array
-                    if(isset($args[0])){
+                    if (isset($args[0])) {
                         $data = (array) $args[0];
                     }
                 }
 
-                if($resource["method"] == 'PUT' || $resource["method"] == 'GET'){
+                if ($resource["method"] == 'PUT' || $resource["method"] == 'GET') {
                     //for PUT and GET the second argument should be an array
-                    if(isset($args[1])){
+                    if (isset($args[1])) {
                         $data = (array) $args[1];
                     }
                 }
 
                 //process key
-                if($key != ""){
+                if ($key != "") {
                     $resource["endpoint"] = $resource["endpoint"] . $key ."/";
                 }
                 //process subresource
-                if(isset($resource["sub_resource"])){
+                if (isset($resource["sub_resource"])) {
                     $resource["endpoint"] = $resource["endpoint"] . $resource["sub_resource"];
                 }
 
@@ -203,7 +203,8 @@
          * @param string $resource
          * @return mixed
          */
-        private function callResource($resource){
+        private function callResource($resource)
+        {
             $time = date("c");
             $headers = array(
                 'Request-Time' => $time,
@@ -217,11 +218,13 @@
             $this->_links = isset($response->body->_links) ? $this->toArray($response->body->_links) : false;
             $data = $this->toArray($response->body->records);
 
-            if(!isset($headers['Status']) || $headers['Status'] == '200 OK' || $headers['Status'] == '201 Created'){
+            if (!isset($headers['Status']) || $headers['Status'] == '200 OK' || $headers['Status'] == '201 Created') {
                 $this->_currentError = false;
+
                 return $data;
-            }else{
+            } else {
                 $this->_currentError = $data;
+
                 return false;
             }
         }
@@ -238,8 +241,8 @@
         {
             $url = $resource["endpoint"];
             // for GET requests we have to append the args to the url before generating a signature
-            if($resource['method'] == 'GET'){
-                if(is_array($resource["data"])){
+            if ($resource['method'] == 'GET') {
+                if (is_array($resource["data"])) {
                     if (strpos($url,'?') !== false) {
                         $url .= "&";
                     } else {
