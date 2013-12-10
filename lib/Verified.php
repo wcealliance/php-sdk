@@ -213,12 +213,15 @@
             $response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
 
             $headers = $response->headers;
-            $this->_metadata = isset($response->body->_meta) ? $response->body->_meta : false;
-            $this->_links = isset($response->body->_links) ? $response->body->_links : false;
+            $this->_metadata = isset($response->body->_meta) ? $this->toArray($response->body->_meta) : false;
+            $this->_links = isset($response->body->_links) ? $this->toArray($response->body->_links) : false;
+            $data = $this->toArray($response->body->records);
+
             if(!isset($headers['Status']) || $headers['Status'] == '200 OK' || $headers['Status'] == '201 Created'){
-                return $response->body->records;
+                $this->_currentError = false;
+                return $data;
             }else{
-                $this->_currentError = $response->body->records;
+                $this->_currentError = $data;
                 return false;
             }
         }
@@ -294,6 +297,11 @@
             }
 
             return $ret;
+        }
+
+        private function toArray($data)
+        {
+            return json_decode(json_encode($data),true);
         }
 
     }
