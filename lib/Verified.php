@@ -226,6 +226,11 @@
                 'Api-Key'      => $this->api_key,
                 'Signature'    => $this->getSignature($resource, $time)
             );
+            if ($resource['method'] == "PUT" || $resource['method'] == "POST") {
+                $headers['Content-type'] = 'application/json';
+                $resource['data'] = json_encode($resource['data']);
+            }
+
             $response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
 
             $headers = $response->headers;
