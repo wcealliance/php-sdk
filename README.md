@@ -18,7 +18,7 @@ dependencies, you can add the Verified SDK with it.
 
 ### Install source from GitHub
 The Verified SDK requires [Unirest](https://github.com/Mashape/unirest-php) as a dependency.
-It also requires PHP `v5.3+`, `cURL` and `mcrypt` extensions for PHP. Download the PHP library from Github, and require in your script like so:
+It also requires PHP `v5.3+` and `cURL` extensions for PHP. Download the PHP library from Github, and require in your script like so:
 
 To install the source code:
 
