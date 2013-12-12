@@ -108,3 +108,17 @@ if ($user == false) {
   //and do something with it
 }
 ```
+
+When calling `PUT` and `POST` endpoints (`addXXXX()` and `editXXXX()`), if the payload contains invalid data, data validation messages appear in the form of an array inside the error object:
+```php
+array(
+  'errorCode'   => '400',
+  'userMessage' => 'Bad Request',
+  'devMessage'  => array(
+      'email'   => 'Invalid email address'
+  )
+)
+```
+
+In addition to the special getter `getError()`, there is also another getter method for metadata.
+`getMetadata()` returns an array containing all the metadata that was sent with the reponse.
