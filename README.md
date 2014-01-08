@@ -120,5 +120,9 @@ array(
 )
 ```
 
+#### Response Metadata
 In addition to the special getter `getError()`, there is also another getter method for metadata.
-`getMetadata()` returns an array containing all the metadata that was sent with the reponse.
+`getMetadata()` returns an array containing all the metadata that was sent with the response.
+
+Metadata usually contains the response status, offset/limit values and the total number of records returned.
+It also contains HATEOAS links which can be leveraged for paginating long lists.
