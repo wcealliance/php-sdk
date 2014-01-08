@@ -126,3 +126,5 @@ In addition to the special getter `getError()`, there is also another getter met
 
 Metadata usually contains the response status, offset/limit values and the total number of records returned.
 It also contains HATEOAS links which can be leveraged for paginating long lists.
+
+To obtain HATEOAS links only, another special getter `getLinks()` can be used. It returns just the HATEOAS links from a response.
