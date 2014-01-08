@@ -235,7 +235,7 @@
 
             $headers = $response->headers;
             $this->_metadata = isset($response->body->_meta) ? $this->toArray($response->body->_meta) : false;
-            $this->_links = isset($response->body->_links) ? $this->toArray($response->body->_links) : false;
+            $this->_links = isset($this->_metadata['links']) ? $this->_metadata['links'] : false;
             $data = $this->toArray($response->body->records);
 
             if (!isset($headers['Status']) || $headers['Status'] == '200 OK' || $headers['Status'] == '201 Created') {
