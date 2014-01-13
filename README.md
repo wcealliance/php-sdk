@@ -43,9 +43,10 @@ by sending in a configuration array during class instantiation:
 ```php
 // create a new instance
 $config_array = array(
-  "api_key"     => 'YOUR_API_KEY',
-  "api_secret"  => 'YOUR_API_SECRET',
-  "api_version" => '1'
+  "api_endpoint"   => "http://verifiedapi.org",
+  "api_key"        => 'YOUR_API_KEY',
+  "api_secret"     => 'YOUR_API_SECRET',
+  "api_version"    => '1'
 );
 $verified = new Verified($config_array);
 ```
@@ -64,6 +65,8 @@ $verified->setConfig('api_version', '1');
 // get a config param
 $version = $verified->getConfig('api_version');
 ```
+ **Please Note:** By default, the `api_endpoint` parameter is set to the live URL, to use sandbox mode, please use the sandbox url `http://sandbox.verifiedapi.org`.
+
 ### Making REST calls to API resources
 Please see the [Verified API docs](http://docs.verifiedapi.org/) for a list of available API resource endpoints. The class uses `__call()` magic method to work out which resource you are calling.
 
