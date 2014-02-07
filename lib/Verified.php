@@ -231,7 +231,10 @@
                 $resource['data'] = json_encode($resource['data']);
             }
 
-            $response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
+            //$response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
+            $response = call_user_func_array(
+                array('Unirest', strtolower($resource['method'])), 
+                array($resource["endpoint"], $headers, $resource['data']));
 
             $headers = $response->headers;
             $this->_metadata = isset($response->body->_meta) ? $this->toArray($response->body->_meta) : false;
