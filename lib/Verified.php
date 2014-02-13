@@ -9,6 +9,7 @@
         private $_metadata;
         private $_links;
         private $_currentError;
+        private $_customHeaders = array();
 
         /**
          * Constructor
@@ -103,6 +104,49 @@
             }
 
             return null;
+        }
+
+        /**
+         * Add custom headers to be sent in the request
+         *
+         * @param string $key
+         * @param string $val
+         * @return $this
+         */
+        public function addCustomHeader($key, $val)
+        {
+            if (!empty($key) && !empty($val)) {
+                $keyParts = preg_split("/[-_]/", $key);
+                $key      = implode(' ', $keyParts);
+                $key      = str_replace(' ', '-', ucwords(trim($key)));
+                $reserved = array('Request-Time', 'Api-Key', 'Signature', 'Accept', 'Content-Type');
+                if (!in_array($key, $reserved)) {
+                    $this->_customHeaders[$key] = $val;
+                }
+            }
+
+            return $this;
+        }
+
+        /**
+         * Getter for all custom headers that have been added by the user
+         *
+         * @return array
+         */
+        public function getCustomHeaders($key, $val)
+        {
+            return $this->_customHeaders;
+        }
+        
+        /**
+         * Deletes all customer headers
+         *
+         * @return $this
+         */
+        public function deleteCustomHeaders()
+        {
+            $this->_customHeaders = array();
+            return $this;
         }
 
         /**
@@ -241,9 +285,11 @@
             );
 
             if ($resource['method'] == "PUT" || $resource['method'] == "POST") {
-                $headers['Content-type'] = 'application/json';
+                $headers['Content-Type'] = 'application/json';
                 $resource['data'] = json_encode($resource['data']);
             }
+
+            $headers = $headers + $this->_customHeaders;
 
             //$response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
             $response = call_user_func_array(
