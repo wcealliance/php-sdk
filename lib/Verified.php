@@ -137,7 +137,7 @@
         {
             return $this->_customHeaders;
         }
-        
+
         /**
          * Deletes all customer headers
          *
@@ -146,6 +146,7 @@
         public function deleteCustomHeaders()
         {
             $this->_customHeaders = array();
+
             return $this;
         }
 
@@ -297,19 +298,18 @@
                 array($resource["endpoint"], $headers, $resource['data']));
 
             $responseHeaders = $response->headers;
-            if($response_type == 'application/json'){
+            if ($response_type == 'application/json') {
                 $this->_metadata = isset($response->body->_meta) ? $this->toArray($response->body->_meta) : false;
                 $this->_links = isset($this->_metadata['links']) ? $this->_metadata['links'] : false;
                 $data = $this->toArray($response->body->records);
-            }else{
+            } else {
                 $this->_metadata = false;
                 $this->_links = false;
                 $data = $response->body;
             }
-            
 
-            if (!isset($responseHeaders['Status']) || 
-            $responseHeaders['Status'] == '200 OK' || 
+            if (!isset($responseHeaders['Status']) ||
+            $responseHeaders['Status'] == '200 OK' ||
             $responseHeaders['Status'] == '201 Created') {
                 $this->_currentError = false;
 
