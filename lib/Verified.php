@@ -21,7 +21,8 @@
             //declare default options
             $defaults = array(
                 "api_endpoint"    => 'http://verifiedapi.org/',
-                "api_version"     => '1'
+                "api_version"     => '1',
+                "response_type"   => 'json'
             );
             foreach ($config as $key => $value) {
                 //pluck the api key out of the config array
@@ -221,11 +222,24 @@
         private function callResource($resource)
         {
             $time = date("c");
+
+            $response_type = 'application/json';
+            switch (strtolower($this->config['response_type'])) {
+                case 'xml':
+                $response_type = 'application/xml';
+                break;
+                case 'csv':
+                $response_type = 'application/csv';
+                break;
+            }
+
             $headers = array(
                 'Request-Time' => $time,
                 'Api-Key'      => $this->api_key,
-                'Signature'    => $this->getSignature($resource, $time)
+                'Signature'    => $this->getSignature($resource, $time),
+                'Accept'       => $response_type
             );
+
             if ($resource['method'] == "PUT" || $resource['method'] == "POST") {
                 $headers['Content-type'] = 'application/json';
                 $resource['data'] = json_encode($resource['data']);
@@ -233,7 +247,7 @@
 
             //$response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
             $response = call_user_func_array(
-                array('Unirest', strtolower($resource['method'])), 
+                array('Unirest', strtolower($resource['method'])),
                 array($resource["endpoint"], $headers, $resource['data']));
 
             $headers = $response->headers;
