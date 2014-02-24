@@ -37,7 +37,7 @@
                     continue;
                 }
                 //overwrite the default value of config item if it exists
-                if (isset($defaults[$key])) {
+                if (array_key_exists($key, $this->config)) {
                     $defaults[$key] = $value;
                 }
             }
@@ -84,7 +84,7 @@
          */
         public function setConfig($key, $val)
         {
-            if (isset($this->config[$key])) {
+            if (isset(array_key_exists($key, $this->config))) {
                 $this->config[$key] = $val;
             }
 
@@ -99,7 +99,7 @@
          */
         public function getConfig($key)
         {
-            if (isset($this->config[$key])) {
+            if (isset(array_key_exists($key, $this->config))) {
                 return $this->config[$key];
             }
 
