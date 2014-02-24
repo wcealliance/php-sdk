@@ -37,7 +37,7 @@
                     continue;
                 }
                 //overwrite the default value of config item if it exists
-                if (array_key_exists($key, $this->config)) {
+                if (array_key_exists($key, $defaults)) {
                     $defaults[$key] = $value;
                 }
             }
