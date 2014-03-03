@@ -84,7 +84,7 @@
          */
         public function setConfig($key, $val)
         {
-            if (isset(array_key_exists($key, $this->config))) {
+            if (array_key_exists($key, $this->config)) {
                 $this->config[$key] = $val;
             }
 
@@ -99,7 +99,7 @@
          */
         public function getConfig($key)
         {
-            if (isset(array_key_exists($key, $this->config))) {
+            if (array_key_exists($key, $this->config)) {
                 return $this->config[$key];
             }
 
