@@ -371,6 +371,7 @@
             );
             //split the camelcase
             $words = preg_split("/(?<=[a-z])(?=[A-Z])/x", $method);
+            $mainResource = "";
 
             //first word is verb
             if (isset($verbs[strtolower($words[0])])) {
@@ -379,15 +380,21 @@
                 array_shift($words);
                 //this word should be the main resource
                 if (isset($words[0])) {
+                    $mainResource = strtolower($words[0]);
                     $ret["endpoint"] = $this->config['api_endpoint'].
                         'v' . $this->config['api_version'] . "/" .
-                        strtolower($words[0]) . "/";
+                        $mainResource . "/";
                 }
                 //move to next word
                 array_shift($words);
                 $subResource = implode("", $words);
                 if ($subResource != "") {
-                    $ret["sub_resource"] = lcfirst($subResource);
+                    if ($mainResource == "report") {
+                        //if the main resource is 'report', id comes after the sub-resource
+                        $ret["endpoint"] .= lcfirst($subResource) . "/";
+                    } else {
+                        $ret["sub_resource"] = lcfirst($subResource);
+                    }
                 }
             }
 
