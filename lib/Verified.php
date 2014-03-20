@@ -285,6 +285,10 @@
                 'Accept'       => $response_type
             );
 
+            if (empty($resource['data'])) {
+                $resource['data'] = null;
+            }
+
             if ($resource['method'] == "PUT" || $resource['method'] == "POST") {
                 $headers['Content-Type'] = 'application/json';
                 $resource['data'] = json_encode($resource['data']);
