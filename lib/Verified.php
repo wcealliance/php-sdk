@@ -278,6 +278,10 @@
                 break;
             }
 
+            if ($resource['method'] == "GET") {
+                $this->parseQ($resource);
+            }
+
             $headers = array(
                 'Request-Time' => $time,
                 'Api-Key'      => $this->api_key,
@@ -356,6 +360,31 @@
                      str_replace($this->config['api_endpoint'] , "", $url);
 
             return hash_hmac("sha256", $token, $this->api_secret);
+        }
+
+        /**
+         * Parses the q parameter if its sent as an array
+         * and modifies that paramter in-place
+         *
+         * @param array $resource
+         * @return null
+         */
+        private function parseQ(&$resource)
+        {
+            if (is_array($resource['data'])) {
+                foreach ($resource['data'] as $key => $value) {
+                    if ($key == 'q') {
+                        if (is_array($value)) {
+                            $q_params = array();
+                            foreach ($value as $k => $v) {
+                                $q_params[] = $k . ':' . $v;
+                            }
+                            $q_params = '(' . implode(',', $q_params) . ')';
+                            $resource['data']['q'] = $q_params;
+                        }
+                    }
+                }
+            }
         }
 
         /**
