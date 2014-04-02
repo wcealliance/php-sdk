@@ -132,6 +132,8 @@ class methodTest extends baseTest
             $this->assertSame($v['endpoint'], $returned['endpoint']);
             if (isset($v['sub_resource'])) {
                 $this->assertSame($v['sub_resource'], $returned['sub_resource']);
+            }else{
+                $this->assertArrayNotHasKey('sub_resource', $returned);
             }
         }
     }
