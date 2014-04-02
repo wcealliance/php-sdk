@@ -118,7 +118,7 @@
             if (!empty($key) && !empty($val)) {
                 $keyParts = preg_split("/[-_]/", $key);
                 $key      = implode(' ', $keyParts);
-                $key      = str_replace(' ', '-', ucwords(trim($key)));
+                $key      = str_replace(' ', '-', ucwords(strtolower(trim($key))));
                 $reserved = array('Request-Time', 'Api-Key', 'Signature', 'Accept', 'Content-Type');
                 if (!in_array($key, $reserved)) {
                     $this->_customHeaders[$key] = $val;
