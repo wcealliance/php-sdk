@@ -63,4 +63,41 @@ class configTest extends baseTest
 
     }
 
+    public function testConfigSettersAndGetters()
+    {
+        $tempConfig = array(
+            "api_endpoint"    => 'http://example101.org/',
+            "api_version"     => '3.2',
+            "response_type"   => 'shark',
+            "another"         => 'anything',
+            "api_key"         => 'a-123456',
+            "api_secret"      => 'a-0987654'
+        );
+
+        $this->V->setKey($tempConfig['api_key']);
+        $this->V->setSecret($tempConfig['api_secret']);
+
+        $this->V->setConfig('api_endpoint', $tempConfig['api_endpoint']);
+        $this->V->setConfig('api_version', $tempConfig['api_version']);
+        $this->V->setConfig('response_type', $tempConfig['response_type']);
+        $this->V->setConfig('another', $tempConfig['another']);
+
+        //test getters return the right value
+        $this->assertSame($tempConfig['api_endpoint'], $this->V->getConfig('api_endpoint'));
+        $this->assertSame($tempConfig['api_version'], $this->V->getConfig('api_version'));
+        $this->assertSame($tempConfig['response_type'], $this->V->getConfig('response_type'));
+        $this->assertNull($this->V->getConfig('another'));
+
+        //test private properties are set properly with the setters
+        $reflection = new \ReflectionClass($this->V);
+        $prop = $reflection->getProperty('api_key');
+        $prop->setAccessible(true);
+        $this->assertSame($tempConfig['api_key'], $prop->getValue($this->V));
+        $prop = $reflection->getProperty('api_secret');
+        $prop->setAccessible(true);
+        $this->assertSame($tempConfig['api_secret'], $prop->getValue($this->V));
+
+    }
+
+
 }
