@@ -9,3 +9,4 @@
 .idea/
 /.project
 /vendor/
+tests/_log
