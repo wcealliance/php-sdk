@@ -99,5 +99,75 @@ class configTest extends baseTest
 
     }
 
+    public function testCustomHeaders()
+    {
+        //test all incarnations of reserved headers are not set
+        $reserved = array('Request-Time', 'Api-Key', 'Signature', 'Accept', 'Content-Type',
+        'Request_Time', 'Api_Key', 'Content_Type',
+        'request-time', 'api-key', 'content-type',
+        'request_time', 'api_key', 'content_type', 'signature', 'accept',
+        'REQUEST_TIME', 'API_KEY', 'CONTENT_TYPE', 'SIGNATURE', 'ACCEPT');
+        foreach ($reserved as $r) {
+            $this->V->addCustomHeader($r, 'test');
+        }
+
+        $headers = $this->V->getCustomHeaders();
+        $this->assertSame(0, count($headers));
+        foreach ($headers as $key => $value) {
+            $this->assertFalse(in_array($key, $reserved));
+        }
+
+        //test custom headers can be set and are cased properly
+        $customHeaders = array(
+            'movie'        => 'Inception',
+            'category'     => 'Science Fiction',
+            'the_actor'    => 'Leonardo di Caprio',
+            'foo-bar'      => 'Does not apply'
+        );
+        foreach ($customHeaders as $key => $value) {
+            $this->V->addCustomHeader($key, $value);
+        }
+        $headers = $this->V->getCustomHeaders();
+        $this->assertSame(count($customHeaders), count($headers));
+        foreach ($customHeaders as $key => $value) {
+            $originalKey = $key;
+            $key         = $this->fixHeaderName($key);
+            $this->assertSame($customHeaders[$originalKey], $headers[$key]);
+        }
+
+        //test overwriting existing header takes place properly
+        $array_keys_to_test = array(
+            'the_actor', 'the-actor', 'The_Actor', 'The-Actor',
+            'THE_ACTOR', 'THE-ACTOR'
+        );
+        $i = 0;
+        foreach ($array_keys_to_test as $aktt) {
+            $this->V->addCustomHeader($aktt, 'Montgomery Burns' . $i);
+            $this->assertSame(count($customHeaders), count($headers));
+            $headers = $this->V->getCustomHeaders();
+            foreach ($customHeaders as $key => $value) {
+                if ($key == $aktt) {
+                    $key = $this->fixHeaderName($key);
+                    $this->assertSame('Montgomery Burns' . $i, $headers[$key]);
+                }
+            }
+            $i++;
+        }
+
+        //test deleting all headers
+        $this->V->deleteCustomHeaders();
+        $headers = $this->V->getCustomHeaders();
+        $this->assertSame(0, count($headers));
+
+    }
+
+    private function fixHeaderName($key)
+    {
+        $keyParts    = preg_split("/[-_]/", $key);
+        $key         = implode(' ', $keyParts);
+        $key         = str_replace(' ', '-', ucwords(strtolower(trim($key))));
+
+        return $key;
+    }
 
 }
