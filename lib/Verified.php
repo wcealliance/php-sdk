@@ -133,7 +133,7 @@
          *
          * @return array
          */
-        public function getCustomHeaders($key, $val)
+        public function getCustomHeaders()
         {
             return $this->_customHeaders;
         }
