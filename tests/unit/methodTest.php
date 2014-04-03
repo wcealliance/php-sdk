@@ -29,7 +29,7 @@ class methodTest extends baseTest
         
         $this->assertSame(
             $this->getSignature($request_time, $resource['method'], $resource['endpoint'], $secret), 
-            $this->call('getSignature', $resource, $request_time)
+            $this->call('getSignature', array($resource, $request_time))
         );
         
         //not a GET request, so signature should be the same
@@ -39,7 +39,7 @@ class methodTest extends baseTest
             $resource['method'] = $meth;
             $this->assertSame(
                 $this->getSignature($request_time, $resource['method'], $resource['endpoint'], $secret), 
-                $this->call('getSignature', $resource, $request_time)
+                $this->call('getSignature', array($resource, $request_time))
             );
         }
         
@@ -47,7 +47,7 @@ class methodTest extends baseTest
         $resource['method'] = 'GET';
         $this->assertSame(
             $this->getSignature($request_time, $resource['method'], $resource['endpoint'] . "?foo=bar&bar=foo", $secret), 
-            $this->call('getSignature', $resource, $request_time)
+            $this->call('getSignature', array($resource, $request_time))
         );
         
     }
@@ -128,7 +128,7 @@ class methodTest extends baseTest
         );
         
         foreach ($data as $k => $v) {
-            $returned = $this->call('parseMethodCall', $k);
+            $returned = $this->call('parseMethodCall', array($k));
             $this->assertSame($v['endpoint'], $returned['endpoint']);
             if (isset($v['sub_resource'])) {
                 $this->assertSame($v['sub_resource'], $returned['sub_resource']);
@@ -146,11 +146,20 @@ class methodTest extends baseTest
         return hash_hmac("sha256", $token, $secret);
     }
     
-    private function call($method, $arg1 = '', $arg2 = '', $arg3 = '')
+    private function call($method, $args)
     {
+        $re_args = array();
         $method = $this->reflected->getMethod($method);
         $method->setAccessible(true);
-        return $method->invoke($this->V, $arg1, $arg2, $arg3);
+        $params = $method->getParameters();
+        foreach ($params as $key => $param) { 
+            if ($param->isPassedByReference()) { 
+                $re_args[$key] = &$args[$key]; 
+            } else { 
+                $re_args[$key] = $args[$key]; 
+            } 
+        }
+        return $method->invokeArgs($this->V, $re_args);
     }
     
 }
