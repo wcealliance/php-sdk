@@ -138,6 +138,55 @@ class methodTest extends baseTest
         }
     }
     
+    public function testQParser()
+    {
+        //should not be touched at all by the method
+        $resource = array(
+            'data' => 'q=(thing:otherthing, foo[]:bar, bar[gt]:foo)'
+        );
+        $expected = $resource;
+        $this->call('parseQ', array(&$resource));
+        $this->assertSame($expected['data'], $resource['data']);
+        
+        //should not be touched at all by the method
+        $resource = array(
+            'data' => array(
+                'q' => '(thing:otherthing, foo[]:bar, bar[gt]:foo)'
+            )
+        );
+        $expected = $resource;
+        $this->call('parseQ', array(&$resource));
+        $this->assertSame($expected['data']['q'], $resource['data']['q']);
+        
+        //should be transformed
+        $resource = array(
+            'data' => array(
+                'q' => array(
+                    'thing'   => 'otherthing',
+                    'foo[]'   => 'bar',
+                    'bar[gt]' => 'foo'
+                )
+            )
+        );
+        $expected = preg_replace("/\s+/", "", $expected['data']['q']);
+        $this->call('parseQ', array(&$resource));
+        $this->assertSame($expected, $resource['data']['q']);
+        
+        //should be transformed
+        $resource = array(
+            'data' => array(
+                'q' => array(
+                    'thing[lt]'   => 'otherthing',
+                    'foo[eq]'   => 'bar',
+                    'bar[gt]' => 'foo'
+                )
+            )
+        );
+        $expected = '(thing[lt]:otherthing,foo[eq]:bar,bar[gt]:foo)';
+        $this->call('parseQ', array(&$resource));
+        $this->assertSame($expected, $resource['data']['q']);
+    }
+    
     
     private function getSignature($request_time, $method, $endpoint, $secret)
     {
