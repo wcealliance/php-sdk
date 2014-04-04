@@ -31,6 +31,10 @@ class Unirest
 
     public static function request($httpMethod, $url, $body = NULL, $headers = array(), $username = NULL, $password = NULL)
     {
+        if (!is_array($body) && $body !== NULL) {
+            $body = json_decode($body, true);
+        }
+
         if ($httpMethod != 'GET') {
             if (is_array($body) || $body instanceof Traversable) {
                 Unirest::http_build_query_for_curl($body, $postBody);
@@ -65,19 +69,22 @@ class Unirest
 
         // Error Triggering via params
         $showError = false;
-        foreach ($body as $key => $value) {
-            if ($key == 'showError' && $value == '1') {
-                $showError = true;
-            }
-            if ($key == 'showLinks' && $value == '1') {
-                $response->body->_meta['links'] = array(
-                    'next' => array(
-                        'method' => $httpMethod,
-                        'uri'    => 'http://someuri.com'
-                    )
-                );
+        if (is_array($body)) {
+            foreach ($body as $key => $value) {
+                if ($key == 'showError' && $value == '1') {
+                    $showError = true;
+                }
+                if ($key == 'showLinks' && $value == '1') {
+                    $response->body->_meta['links'] = array(
+                        'next' => array(
+                            'method' => $httpMethod,
+                            'uri'    => 'http://someuri.com'
+                        )
+                    );
+                }
             }
         }
+        
 
         if ($showError) {
             $response->headers['Status'] = '404 Not Found';
