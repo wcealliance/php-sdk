@@ -1,6 +1,8 @@
 Verified API SDK for PHP
 ================
 
+![](https://travis-ci.org/verified/verified-sdk-php.svg)
+
 Communicate with the Verified REST API using PHP
 
 ### Install with Composer
