@@ -1,7 +1,7 @@
 Verified API SDK for PHP
 ================
 
-![](https://travis-ci.org/verified/verified-sdk-php.svg)
+[![Build Status](https://travis-ci.org/verified/verified-sdk-php.svg?branch=master)](https://travis-ci.org/verified/verified-sdk-php)
 
 Communicate with the Verified REST API using PHP
 
