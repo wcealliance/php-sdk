@@ -1,7 +1,7 @@
 WCEA API SDK for PHP
 ================
 
-[![Build Status](https://travis-ci.org/wcealliance/wcea-sdk-php.svg?branch=master)](https://travis-ci.org/wcealliance/wcea-sdk-php)
+[![Build Status](https://travis-ci.org/wcealliance/php-sdk.svg?branch=master)](https://travis-ci.org/wcealliance/php-sdk)
 
 Communicate with the WCEA REST API using PHP
 
@@ -12,7 +12,7 @@ dependencies, you can add the WCEA SDK with it.
 ```javascript
 {
   "require" : {
-    "wcealliance/wcea-sdk-php": "dev-master"
+    "wcealliance/php-sdk": "dev-master"
   },
   "minimum-stability": "dev"
 }
@@ -25,7 +25,7 @@ It also requires PHP `v5.3+` and `cURL` extensions for PHP. Download the PHP lib
 To install the source code:
 
 ```bash
-$ git clone git@github.com:wcealliance/wcea-sdk-php.git
+$ git clone git@github.com:wcealliance/php-sdk.git
 ```
 
 And include it in your scripts:
@@ -34,7 +34,7 @@ And include it in your scripts:
 // first include Unirest
 require_once '/path/to/unirest-php/lib/Unirest.php';
 // then include this
-require_once '/path/to/wcea-sdk-php/lib/WCEAAPI.php';
+require_once '/path/to/php-sdk/lib/WCEAAPI.php';
 ```
 
 ##Usage
