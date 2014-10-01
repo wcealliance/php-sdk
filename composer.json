@@ -1,8 +1,8 @@
 {
-    "name": "verified/wcea-sdk-php",
+    "name": "wcealliance/php-sdk",
     "description": "WCEA API PHP SDK",
     "type" : "library",
-    "homepage" : "https://github.com/verified/wcea-sdk-php/",
+    "homepage" : "https://github.com/wcealliance/php-sdk/",
     "require": {
         "php" : ">=5.3.0",
         "ext-curl" : "*",
