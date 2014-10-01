@@ -8,8 +8,8 @@ class configTest extends baseTest
     {
         parent::_before();
         $this->baseConfig = array(
-            "api_endpoint"    => 'http://verifiedapi.org/',
-            "api_version"     => '1',
+            "api_endpoint"    => 'http://wceaapi.org/',
+            "api_version"     => '1.1',
             "response_type"   => 'json'
         );
     }
@@ -22,9 +22,9 @@ class configTest extends baseTest
     public function testConstruction()
     {
         // construction with no config given
-        $v = new Verified();
+        $api = new WCEAAPI();
         foreach ($this->baseConfig as $key => $value) {
-            $this->assertSame($this->baseConfig[$key], $v->getConfig($key));
+            $this->assertSame($this->baseConfig[$key], $api->getConfig($key));
         }
 
         //construction with config
@@ -33,9 +33,9 @@ class configTest extends baseTest
             "api_version"     => '3',
             "response_type"   => 'whale'
         );
-        $v = new Verified($tempConfig);
+        $api = new WCEAAPI($tempConfig);
         foreach ($tempConfig as $key => $value) {
-            $this->assertSame($tempConfig[$key], $v->getConfig($key));
+            $this->assertSame($tempConfig[$key], $api->getConfig($key));
         }
 
         //construction with config and extra params
@@ -47,19 +47,19 @@ class configTest extends baseTest
             "api_key"         => '123456',
             "api_secret"      => '0987654'
         );
-        $v = new Verified($tempConfig);
-        $this->assertNull($v->getConfig('another'));
-        $this->assertNull($v->getConfig('api_key'));
-        $this->assertNull($v->getConfig('api_secret'));
+        $api = new WCEAAPI($tempConfig);
+        $this->assertNull($api->getConfig('another'));
+        $this->assertNull($api->getConfig('api_key'));
+        $this->assertNull($api->getConfig('api_secret'));
 
         //check api keys and secret are stored in private properties
-        $reflection = new \ReflectionClass($v);
+        $reflection = new \ReflectionClass($api);
         $prop = $reflection->getProperty('api_key');
         $prop->setAccessible(true);
-        $this->assertSame($tempConfig['api_key'], $prop->getValue($v));
+        $this->assertSame($tempConfig['api_key'], $prop->getValue($api));
         $prop = $reflection->getProperty('api_secret');
         $prop->setAccessible(true);
-        $this->assertSame($tempConfig['api_secret'], $prop->getValue($v));
+        $this->assertSame($tempConfig['api_secret'], $prop->getValue($api));
 
     }
 
@@ -74,28 +74,28 @@ class configTest extends baseTest
             "api_secret"      => 'a-0987654'
         );
 
-        $this->V->setKey($tempConfig['api_key']);
-        $this->V->setSecret($tempConfig['api_secret']);
+        $this->API->setKey($tempConfig['api_key']);
+        $this->API->setSecret($tempConfig['api_secret']);
 
-        $this->V->setConfig('api_endpoint', $tempConfig['api_endpoint']);
-        $this->V->setConfig('api_version', $tempConfig['api_version']);
-        $this->V->setConfig('response_type', $tempConfig['response_type']);
-        $this->V->setConfig('another', $tempConfig['another']);
+        $this->API->setConfig('api_endpoint', $tempConfig['api_endpoint']);
+        $this->API->setConfig('api_version', $tempConfig['api_version']);
+        $this->API->setConfig('response_type', $tempConfig['response_type']);
+        $this->API->setConfig('another', $tempConfig['another']);
 
         //test getters return the right value
-        $this->assertSame($tempConfig['api_endpoint'], $this->V->getConfig('api_endpoint'));
-        $this->assertSame($tempConfig['api_version'], $this->V->getConfig('api_version'));
-        $this->assertSame($tempConfig['response_type'], $this->V->getConfig('response_type'));
-        $this->assertNull($this->V->getConfig('another'));
+        $this->assertSame($tempConfig['api_endpoint'], $this->API->getConfig('api_endpoint'));
+        $this->assertSame($tempConfig['api_version'], $this->API->getConfig('api_version'));
+        $this->assertSame($tempConfig['response_type'], $this->API->getConfig('response_type'));
+        $this->assertNull($this->API->getConfig('another'));
 
         //test private properties are set properly with the setters
-        $reflection = new \ReflectionClass($this->V);
+        $reflection = new \ReflectionClass($this->API);
         $prop = $reflection->getProperty('api_key');
         $prop->setAccessible(true);
-        $this->assertSame($tempConfig['api_key'], $prop->getValue($this->V));
+        $this->assertSame($tempConfig['api_key'], $prop->getValue($this->API));
         $prop = $reflection->getProperty('api_secret');
         $prop->setAccessible(true);
-        $this->assertSame($tempConfig['api_secret'], $prop->getValue($this->V));
+        $this->assertSame($tempConfig['api_secret'], $prop->getValue($this->API));
 
     }
 
@@ -108,10 +108,10 @@ class configTest extends baseTest
         'request_time', 'api_key', 'content_type', 'signature', 'accept',
         'REQUEST_TIME', 'API_KEY', 'CONTENT_TYPE', 'SIGNATURE', 'ACCEPT');
         foreach ($reserved as $r) {
-            $this->V->addCustomHeader($r, 'test');
+            $this->API->addCustomHeader($r, 'test');
         }
 
-        $headers = $this->V->getCustomHeaders();
+        $headers = $this->API->getCustomHeaders();
         $this->assertSame(0, count($headers));
         foreach ($headers as $key => $value) {
             $this->assertFalse(in_array($key, $reserved));
@@ -125,9 +125,9 @@ class configTest extends baseTest
             'foo-bar'      => 'Does not apply'
         );
         foreach ($customHeaders as $key => $value) {
-            $this->V->addCustomHeader($key, $value);
+            $this->API->addCustomHeader($key, $value);
         }
-        $headers = $this->V->getCustomHeaders();
+        $headers = $this->API->getCustomHeaders();
         $this->assertSame(count($customHeaders), count($headers));
         foreach ($customHeaders as $key => $value) {
             $originalKey = $key;
@@ -142,9 +142,9 @@ class configTest extends baseTest
         );
         $i = 0;
         foreach ($array_keys_to_test as $aktt) {
-            $this->V->addCustomHeader($aktt, 'Montgomery Burns' . $i);
+            $this->API->addCustomHeader($aktt, 'Montgomery Burns' . $i);
             $this->assertSame(count($customHeaders), count($headers));
-            $headers = $this->V->getCustomHeaders();
+            $headers = $this->API->getCustomHeaders();
             foreach ($customHeaders as $key => $value) {
                 if ($key == $aktt) {
                     $key = $this->fixHeaderName($key);
@@ -155,8 +155,8 @@ class configTest extends baseTest
         }
 
         //test deleting all headers
-        $this->V->deleteCustomHeaders();
-        $headers = $this->V->getCustomHeaders();
+        $this->API->deleteCustomHeaders();
+        $headers = $this->API->getCustomHeaders();
         $this->assertSame(0, count($headers));
 
     }

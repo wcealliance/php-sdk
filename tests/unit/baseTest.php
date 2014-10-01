@@ -10,7 +10,7 @@ class baseTest extends \Codeception\TestCase\Test
 
     protected function _before()
     {
-        $this->V = new Verified();
+        $this->API = new WCEAAPI();
         parent::_before();
     }
 
