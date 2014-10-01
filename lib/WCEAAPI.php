@@ -1,6 +1,6 @@
 <?php
 
-    class Verified
+    class WCEAAPI
     {
         private $api_key;
         private $api_secret;
@@ -21,8 +21,8 @@
         {
             //declare default options
             $defaults = array(
-                "api_endpoint"    => 'http://verifiedapi.org/',
-                "api_version"     => '1',
+                "api_endpoint"    => 'http://wceaapi.org/',
+                "api_version"     => '1.1',
                 "response_type"   => 'json'
             );
             foreach ($config as $key => $value) {

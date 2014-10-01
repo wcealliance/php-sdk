@@ -1,8 +1,8 @@
 {
-    "name": "verified/verified-sdk-php",
-    "description": "Verified API PHP SDK",
+    "name": "verified/wcea-sdk-php",
+    "description": "WCEA API PHP SDK",
     "type" : "library",
-    "homepage" : "https://github.com/verified/verified-sdk-php/",
+    "homepage" : "https://github.com/verified/wcea-sdk-php/",
     "require": {
         "php" : ">=5.3.0",
         "ext-curl" : "*",
@@ -10,7 +10,7 @@
         "mashape/unirest-php": "dev-master"
     },
     "autoload" : {
-        "files": ["lib/Verified.php"]
+        "files": ["lib/WCEAAPI.php"]
     },
     "license": "MIT",
     "authors": [
