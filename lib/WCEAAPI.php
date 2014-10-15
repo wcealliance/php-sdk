@@ -21,7 +21,7 @@
         {
             //declare default options
             $defaults = array(
-                "api_endpoint"    => 'http://wceaapi.org/',
+                "api_endpoint"    => 'https://wceaapi.org/',
                 "api_version"     => '1.1',
                 "response_type"   => 'json'
             );
