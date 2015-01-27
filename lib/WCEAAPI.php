@@ -305,7 +305,8 @@
                 array('Unirest', strtolower($resource['method'])),
                 array($resource["endpoint"], $headers, $resource['data']));
 
-            $responseHeaders = $response->headers;
+            $responseCode = $response->code;
+
             if ($response_type == 'application/json') {
                 $this->_metadata = isset($response->body->_meta) ? $this->toArray($response->body->_meta) : false;
                 $this->_links = isset($this->_metadata['links']) ? $this->_metadata['links'] : false;
@@ -316,9 +317,9 @@
                 $data = $response->body;
             }
 
-            if (!isset($responseHeaders['Status']) ||
-            $responseHeaders['Status'] == '200 OK' ||
-            $responseHeaders['Status'] == '201 Created') {
+            if (empty($responseCode) ||
+            $responseCode == '200' ||
+            $responseCode == '201') {
                 $this->_currentError = false;
 
                 return $data;
