@@ -67,6 +67,8 @@ class Unirest
             'Connection' => 'Keep-Alive'
         );
 
+        $response->code = 200;
+
         // Error Triggering via params
         $showError = false;
         if (is_array($body)) {
@@ -84,9 +86,10 @@ class Unirest
                 }
             }
         }
-        
+
 
         if ($showError) {
+            $response->code = 404;
             $response->headers['Status'] = '404 Not Found';
             $response->body->_meta['status'] = "ERROR";
             $response->body->_meta['httpMethod'] = $httpMethod;
