@@ -301,8 +301,12 @@
             $headers = $headers + $this->_customHeaders;
 
             //$response = Unirest::{strtolower($resource['method'])}($resource["endpoint"], $headers, $resource['data']);
+            $Unirest = 'Unirest';
+            if(class_exists('Unirest\Request')){
+                $Unirest = 'Unirest\Request';
+            }
             $response = call_user_func_array(
-                array('Unirest', strtolower($resource['method'])),
+                array($Unirest, strtolower($resource['method'])),
                 array($resource["endpoint"], $headers, $resource['data']));
 
             $responseCode = $response->code;
