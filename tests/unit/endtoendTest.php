@@ -5,6 +5,15 @@ class endtoendTest extends baseTest
 
     private $baseConfig = array();
 
+    private $verbs = array(
+        "get"    => "GET",
+        "add"    => "POST",
+        "edit"   => "PUT",
+        "delete" => "DELETE"
+    );
+
+    private $baseUrl;
+
     public function _before()
     {
         parent::_before();
@@ -13,6 +22,8 @@ class endtoendTest extends baseTest
             "api_version"     => '1.1',
             "response_type"   => 'json'
         );
+
+        $this->baseUrl = $this->baseConfig['api_endpoint'] . 'v' .$this->baseConfig['api_version'];
     }
 
     public function _after()
@@ -42,48 +53,55 @@ class endtoendTest extends baseTest
 
     private function execute($type = 'get')
     {
-        $verbs = array(
-            "get"    => "GET",
-            "add"    => "POST",
-            "edit"   => "PUT",
-            "delete" => "DELETE"
-        );
 
-        $baseUrl = $this->baseConfig['api_endpoint'] . 'v' .$this->baseConfig['api_version'];
         $payload = array('foo' => 'bar');
 
         $res = $this->API->{$type . 'Me'}($payload);
         $qs  = $type == 'get' ? '?foo=bar' : '';
-        $this->assertSame($verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
         $this->assertSame($payload, $res['body']);
-        $this->assertSame($baseUrl . '/me/' . $qs, $res['url']);
+        $this->assertSame($this->baseUrl . '/me/' . $qs, $res['url']);
         $this->assertFalse($this->API->getError());
         $this->assertSame(array(), $this->API->getLinks());
 
         $res = $this->API->{$type . 'MeSomethingElse'}($payload);
         $qs  = $type == 'get' ? '?foo=bar' : '';
-        $this->assertSame($verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
         $this->assertSame($payload, $res['body']);
-        $this->assertSame($baseUrl . '/me/somethingElse' . $qs, $res['url']);
+        $this->assertSame($this->baseUrl . '/me/somethingElse' . $qs, $res['url']);
         $this->assertFalse($this->API->getError());
         $this->assertSame(array(), $this->API->getLinks());
 
         $payload = array('foo' => 'bar', 'baz' => 'foo');
         $qs  = $type == 'get' ? '?foo=bar&baz=foo' : '';
         $res = $this->API->{$type . 'MeSomething'}($payload);
-        $this->assertSame($verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
         $this->assertSame($payload, $res['body']);
-        $this->assertSame($baseUrl . '/me/something' . $qs, $res['url']);
+        $this->assertSame($this->baseUrl . '/me/something' . $qs, $res['url']);
         $this->assertFalse($this->API->getError());
         $this->assertSame(array(), $this->API->getLinks());
 
+
+
+        $this->metadata($type);
+
+        $this->errorCatching($type);
+
+        $this->hateoas($type);
+
+        $this->queryParsing($type);
+
+    }
+
+    private function metadata($type = 'get')
+    {
         //metadata is available
         $payload = array('foo' => 'bar');
         $qs  = $type == 'get' ? '?foo=bar' : '';
         $res = $this->API->{$type . 'Me'}($payload);
-        $this->assertSame($verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
         $this->assertSame($payload, $res['body']);
-        $this->assertSame($baseUrl . '/me/' . $qs, $res['url']);
+        $this->assertSame($this->baseUrl . '/me/' . $qs, $res['url']);
         $this->assertFalse($this->API->getError());
         $this->assertSame(array(), $this->API->getLinks());
         $this->assertSame(array(
@@ -93,52 +111,61 @@ class endtoendTest extends baseTest
             'total' => 21,
             'links' => array()
         ), $this->API->getMetadata());
+    }
 
+    private function errorCatching($type = 'get')
+    {
         // Errors are properly caught and sent to the right class property
         $payload = array('showError' => 1);
         $qs  = $type == 'get' ? '?showError=1' : '';
         $res = $this->API->{$type . 'MeSomethingElse'}($payload);
         $err = $this->API->getError();
         $this->assertFalse($res);
-        $this->assertSame($baseUrl . '/me/somethingElse' . $qs, $err['url']);
+        $this->assertSame($this->baseUrl . '/me/somethingElse' . $qs, $err['url']);
+    }
 
+    private function hateoas($type = 'get')
+    {
         // HATEOAS links are properly parsed
         $payload = array('showLinks' => 1);
         $res = $this->API->{$type . 'MeSomethingElse'}($payload);
         $this->assertFalse($this->API->getError());
         $this->assertSame(array(
             'next' => array(
-                'method' => $verbs[$type],
+                'method' => $this->verbs[$type],
                 'uri'    => 'http://someuri.com'
             )
         ), $this->API->getLinks());
+    }
 
+    private function queryParsing($type = 'get')
+    {
         if ($type == 'get' || $type == 'edit') {
 
             $payload = array('foo' => 'bar');
             $res = $this->API->{$type . 'Me'}(1, $payload);
             $qs  = $type == 'get' ? '?foo=bar' : '';
-            $this->assertSame($verbs[$type], $res['httpMethod']);
+            $this->assertSame($this->verbs[$type], $res['httpMethod']);
             $this->assertSame($payload, $res['body']);
-            $this->assertSame($baseUrl . '/me/1/' . $qs, $res['url']);
+            $this->assertSame($this->baseUrl . '/me/1/' . $qs, $res['url']);
             $this->assertFalse($this->API->getError());
             $this->assertSame(array(), $this->API->getLinks());
 
             $payload = array('foo' => 'bar', 'baz' => 'foo');
             $qs  = $type == 'get' ? '?foo=bar&baz=foo' : '';
             $res = $this->API->{$type . 'MeSomething'}(1, $payload);
-            $this->assertSame($verbs[$type], $res['httpMethod']);
+            $this->assertSame($this->verbs[$type], $res['httpMethod']);
             $this->assertSame($payload, $res['body']);
-            $this->assertSame($baseUrl . '/me/1/something' . $qs, $res['url']);
+            $this->assertSame($this->baseUrl . '/me/1/something' . $qs, $res['url']);
             $this->assertFalse($this->API->getError());
             $this->assertSame(array(), $this->API->getLinks());
 
             $payload = array('foo' => 'bar', 'q' => '(something:else)');
             $qs  = $type == 'get' ? '?foo=bar&q=(something:else)' : '';
             $res = $this->API->{$type . 'MeSomethingElse'}(1, $payload);
-            $this->assertSame($verbs[$type], $res['httpMethod']);
+            $this->assertSame($this->verbs[$type], $res['httpMethod']);
             $this->assertSame($payload, $res['body']);
-            $this->assertSame($baseUrl . '/me/1/somethingElse' . $qs, $res['url']);
+            $this->assertSame($this->baseUrl . '/me/1/somethingElse' . $qs, $res['url']);
             $this->assertFalse($this->API->getError());
             $this->assertSame(array(), $this->API->getLinks());
 
@@ -150,11 +177,10 @@ class endtoendTest extends baseTest
             ));
             $qs  = $type == 'get' ? '?foo=bar&q=(a-name:is_something,num[gt]:10,ek[eq]:qwerty)' : '';
             $res = $this->API->{$type . 'MeSomethingElse'}(1, $payload);
-            $this->assertSame($verbs[$type], $res['httpMethod']);
-            $this->assertSame($baseUrl . '/me/1/somethingElse' . $qs, $res['url']);
+            $this->assertSame($this->verbs[$type], $res['httpMethod']);
+            $this->assertSame($this->baseUrl . '/me/1/somethingElse' . $qs, $res['url']);
             $this->assertFalse($this->API->getError());
             $this->assertSame(array(), $this->API->getLinks());
         }
-
     }
 }
