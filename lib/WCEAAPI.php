@@ -212,27 +212,27 @@
 
                 $data = array();
                 $key = '';
-                if (in_array($resource["method"], array('GET', 'DELETE', 'PUT'))) {
-                    //for these methods the first argument should be the key
-                    if (isset($args[0])) {
-                        if (is_array($args[0])) {
-                            //unless it is a getAll kind of method that has no key
-                            $data = (array) $args[0];
-                        } else {
-                            $key = trim((string) $args[0]);
-                        }
-                    }
-                } else {
-                    //for POST, the first argument should be an array
-                    if (isset($args[0])) {
-                        $data = (array) $args[0];
-                    }
-                }
+                $subKey = '';
 
-                if ($resource["method"] == 'PUT' || $resource["method"] == 'GET') {
-                    //for PUT and GET the second argument should be an array
-                    if (isset($args[1])) {
-                        $data = (array) $args[1];
+                foreach ($args as $k => $arg) {
+                    switch ($k) {
+                        case 0:
+                            if (is_array($arg)) {
+                                $data = $arg;
+                            } else {
+                                $key = trim((string) $arg);
+                            }
+                        break;
+                        case 1:
+                            if (is_array($arg)) {
+                                $data = $arg;
+                            } else {
+                                $subKey = trim((string) $arg);
+                            }
+                        break;
+                        case 2:
+                            $data = (array) $arg;
+                        break;
                     }
                 }
 
@@ -242,7 +242,10 @@
                 }
                 //process subresource
                 if (isset($resource["sub_resource"])) {
-                    $resource["endpoint"] = $resource["endpoint"] . $resource["sub_resource"];
+                    $resource["endpoint"] .= $resource["sub_resource"];
+                    if ($subKey != "") {
+                        $resource["endpoint"] .= '/'.$subKey;
+                    }
                 }
 
                 $resource["data"] = $data;
