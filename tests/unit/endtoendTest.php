@@ -81,7 +81,7 @@ class endtoendTest extends baseTest
         $this->assertFalse($this->API->getError());
         $this->assertSame(array(), $this->API->getLinks());
 
-
+        $this->resourceSubResourceIds($type);
 
         $this->metadata($type);
 
@@ -91,6 +91,39 @@ class endtoendTest extends baseTest
 
         $this->queryParsing($type);
 
+    }
+
+    private function resourceSubResourceIds($type = 'get')
+    {
+        //resource ids
+        $qs = '';
+        $res = $this->API->{$type . 'UserTrainingProfile'}(1234);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->baseUrl . '/user/1234/trainingProfile' . $qs, $res['url']);
+        $this->assertSame(null, $res['body']);
+
+        //resource ids and payload
+        $payload = array('foo' => 'bar', 'baz' => 'foo');
+        $qs  = $type == 'get' ? '?foo=bar&baz=foo' : '';
+        $res = $this->API->{$type . 'UserTrainingProfile'}(1, $payload);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->baseUrl . '/user/1/trainingProfile' . $qs, $res['url']);
+        $this->assertSame($payload, $res['body']);
+
+        //sub_resource ids
+        $qs = '';
+        $res = $this->API->{$type . 'UserTrainingProfile'}(1, 2);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->baseUrl . '/user/1/trainingProfile/2' . $qs, $res['url']);
+        $this->assertSame(null, $res['body']);
+
+        //sub_resource ids and payload
+        $payload = array('foo' => 'bar', 'baz' => 'foo');
+        $qs  = $type == 'get' ? '?foo=bar&baz=foo' : '';
+        $res = $this->API->{$type . 'UserTrainingProfile'}(1, 2, $payload);
+        $this->assertSame($this->verbs[$type], $res['httpMethod']);
+        $this->assertSame($this->baseUrl . '/user/1/trainingProfile/2' . $qs, $res['url']);
+        $this->assertSame($payload, $res['body']);
     }
 
     private function metadata($type = 'get')

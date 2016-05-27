@@ -101,6 +101,10 @@ class methodTest extends baseTest
                 'endpoint' => implode("/", array($e . $v, 'me')) . '/',
                 'sub_resource' => 'anotherThing'
             ),
+            'getUserAccreditor' => array(
+                'endpoint' => implode("/", array($e . $v, 'user')) . '/',
+                'sub_resource' => 'accreditor'
+            ),
             'getReportThing' => array(
                 'endpoint' => implode("/", array($e . $v, 'report')) . '/' . 'thing' . '/',
             ),
