@@ -57,13 +57,13 @@ Or by using a more OOP approach:
 $api = new WCEAAPI();
 $api->setKey('YOUR_API_KEY')
   ->setSecret('YOUR_API_SECRET')
-  ->setConfig('api_version', '1');
+  ->setConfig('api_version', '1.1');
 ```
 
 Configuration parameters other than `api_key` and `api_secret` have setter and getter methods:
 ```php
 // set a config param
-$api->setConfig('api_version', '1');
+$api->setConfig('api_version', '1.1');
 // get a config param
 $version = $api->getConfig('api_version');
 ```
